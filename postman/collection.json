@@ -1,0 +1,202 @@
+{
+  "info": {
+    "_postman_id": "4eac4a29-5daf-44d1-b7d7-202611040001",
+    "name": "Supabase Auth - Testes Caixa Cinza",
+    "description": "Testes de autenticação por senha no Supabase Auth. Configure o Environment local com seus próprios valores. Não exporte credenciais nem tokens.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login válido",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "apikey", "value": "{{api_key}}", "type": "text" },
+          { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/v1/token?grant_type=password",
+          "host": [ "{{base_url}}" ],
+          "path": [ "auth", "v1", "token" ],
+          "query": [ { "key": "grant_type", "value": "password" } ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Retorna HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Resposta contém access_token e token_type', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.have.property('access_token').that.is.a('string').and.not.empty;",
+              "  pm.expect(body).to.have.property('token_type');",
+              "});",
+              "pm.test('Resposta contém usuário', function () { pm.expect(pm.response.json()).to.have.property('user'); });"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Senha incorreta (login inválido)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "apikey", "value": "{{api_key}}", "type": "text" },
+          { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"<SenhaIncorreta>\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/v1/token?grant_type=password",
+          "host": [ "{{base_url}}" ],
+          "path": [ "auth", "v1", "token" ],
+          "query": [ { "key": "grant_type", "value": "password" } ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Retorna erro 4xx', function () { pm.expect(pm.response.code).to.be.within(400, 499); });",
+              "pm.test('Resposta JSON não contém access_token', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.not.have.property('access_token');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Usuário inexistente",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "apikey", "value": "{{api_key}}", "type": "text" },
+          { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"<UsuarioInexistente>\",\n  \"password\": \"{{password}}\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/v1/token?grant_type=password",
+          "host": [ "{{base_url}}" ],
+          "path": [ "auth", "v1", "token" ],
+          "query": [ { "key": "grant_type", "value": "password" } ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Retorna erro 4xx', function () { pm.expect(pm.response.code).to.be.within(400, 499); });",
+              "pm.test('Resposta JSON não contém access_token', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.not.have.property('access_token');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Campos vazios",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "apikey", "value": "{{api_key}}", "type": "text" },
+          { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"\",\n  \"password\": \"\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/v1/token?grant_type=password",
+          "host": [ "{{base_url}}" ],
+          "path": [ "auth", "v1", "token" ],
+          "query": [ { "key": "grant_type", "value": "password" } ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Retorna erro 4xx', function () { pm.expect(pm.response.code).to.be.within(400, 499); });",
+              "pm.test('Resposta JSON não contém access_token', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.not.have.property('access_token');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "response": []
+    },
+    {
+      "name": "Credenciais inválidas (formato do e-mail)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "apikey", "value": "{{api_key}}", "type": "text" },
+          { "key": "Authorization", "value": "Bearer {{api_key}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"email-invalido\",\n  \"password\": \"{{password}}\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/v1/token?grant_type=password",
+          "host": [ "{{base_url}}" ],
+          "path": [ "auth", "v1", "token" ],
+          "query": [ { "key": "grant_type", "value": "password" } ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Retorna erro 4xx', function () { pm.expect(pm.response.code).to.be.within(400, 499); });",
+              "pm.test('Resposta JSON não contém access_token', function () {",
+              "  const body = pm.response.json();",
+              "  pm.expect(body).to.not.have.property('access_token');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}
