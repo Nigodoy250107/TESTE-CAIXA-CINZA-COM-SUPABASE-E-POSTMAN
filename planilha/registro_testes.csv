@@ -1,0 +1,6 @@
+ID do teste,Cenário,Entrada,Resultado esperado,Resultado obtido,Status,Observações
+TC-001,Login válido,"email=<UsuarioTeste>; password=<SenhaTeste>","HTTP 200; JSON contém access_token e dados do usuário","HTTP 200; access_token e user presentes; 3/3 asserções passaram",OK,"Não registrar o valor de access_token ou refresh_token"
+TC-002,Senha incorreta,"email=<UsuarioTeste>; password=<SenhaIncorreta>","HTTP 4xx; sem access token","HTTP 400; invalid_credentials / Invalid login credentials; 2/2 asserções passaram",OK,"Resposta negativa não incluiu access_token"
+TC-003,Usuário inexistente,"email=nao-existe-qa-20261106@example.com; password=<SenhaTeste>","HTTP 4xx; sem access token","HTTP 400; invalid_credentials / Invalid login credentials; 2/2 asserções passaram",OK,"Endereço de formato válido e inexistente; resposta negativa sem token"
+TC-004,Campos vazios,"email=; password=","HTTP 4xx; erro de validação; sem access token","HTTP 400; validation_failed / missing email or phone; 2/2 asserções passaram",OK,"Resposta negativa não incluiu access_token"
+TC-005,Credenciais inválidas,"email=valor-sem-formato-de-email; password=<SenhaTeste>","HTTP 4xx; mensagem de erro; sem access token","HTTP 400; invalid_credentials / Invalid login credentials; 2/2 asserções passaram",OK,"Formato inválido retornou mensagem genérica de credenciais inválidas; sem token"
